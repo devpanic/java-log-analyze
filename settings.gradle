@@ -1,0 +1,4 @@
+rootProject.name = 'log-analyze'
+include 'src:main:fileAnalyze'
+findProject(':src:main:fileAnalyze')?.name = 'fileAnalyze'
+
