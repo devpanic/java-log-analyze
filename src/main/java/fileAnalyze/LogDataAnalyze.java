@@ -9,12 +9,14 @@ public class LogDataAnalyze {
     private Map<String, Integer> responseData;
     private Map<String, Integer> reqKeyData;
     private Map<String, Integer> browserData;
+    private Map<String, int[]> urlRespCodeData;
     private int[] timeData;
 
     public LogDataAnalyze() {
         responseData = new HashMap<>();
         reqKeyData = new HashMap<>();
         browserData = new HashMap<>();
+        urlRespCodeData = new HashMap<String, int[]>();
         timeData = new int[24];
     }
 
@@ -127,7 +129,7 @@ public class LogDataAnalyze {
         return getBrowserCount(browser) / sum;
     }
 
-    public String showBrowserData() {
+    public String getBrowserData() {
         StringBuilder returnStr = new StringBuilder();
         Iterator<String> keyCount = browserData.keySet().iterator();
 
@@ -147,21 +149,95 @@ public class LogDataAnalyze {
         return timeData[time];
     }
 
-    public int getMaxTimeCount() {
+    public int getMaxCountTime() {
         int max = -1;
+        int maxTime = -1;
 
         for (int i = 0; i < 24; i++) {
             if (max < timeData[i]) {
                 max = timeData[i];
+                maxTime = i;
             }
         }
 
-        return max;
+        return maxTime;
     }
 
-    public void showTimeData() {
+    public String showTimeData() {
+        StringBuilder timeData = new StringBuilder();
+
         for (int i = 0; i < 24; i++) {
-            System.out.println(i + "시 - " + getTimeCount(i));
+            timeData.append(i + "시 : " + getTimeCount(i) + "\n");
         }
+        
+        return timeData.toString();
+    }
+
+    public void saveURLData(String url, int respCode) {
+        if (url.length() == 0) {
+            return;
+        }
+
+        if (!urlRespCodeData.containsKey(url)) {
+            urlRespCodeData.put(url, new int[4]);
+        }
+
+        saveURLRespData(urlRespCodeData.get(url), respCode);
+    }
+
+    public void saveURLRespData(int[] urlRespCodeArr, int respCode) {
+        switch (respCode) {
+            case 200:
+                urlRespCodeArr[0] += 1;
+                break;
+            case 403:
+                urlRespCodeArr[1] += 1;
+                break;
+            case 404:
+                urlRespCodeArr[2] += 1;
+                break;
+            case 500:
+                urlRespCodeArr[3] += 1;
+                break;
+        }
+    }
+
+    public int getURLRespData(String url, int respCode) {
+        if (!urlRespCodeData.containsKey(url)) {
+            return -1;
+        }
+
+        int[] urlRespCodeArr = urlRespCodeData.get(url);
+
+        switch (respCode) {
+            case 200:
+                return urlRespCodeArr[0];
+            case 403:
+                return urlRespCodeArr[1];
+            case 404:
+                return urlRespCodeArr[2];
+            case 500:
+                return urlRespCodeArr[3];
+            default:
+                return -1;
+        }
+    }
+
+    public String showURLData() {
+        Iterator<String> urlDataIter = urlRespCodeData.keySet().iterator();
+        StringBuilder urlData = new StringBuilder();
+
+        while (urlDataIter.hasNext()) {
+            String url = urlDataIter.next();
+            int[] tempArr = urlRespCodeData.get(url);
+            urlData.append(url + ",");
+            for (int data : tempArr) {
+                urlData.append(data + ",");
+            }
+            urlData.deleteCharAt(urlData.length() - 1);
+            urlData.append("\n");
+        }
+
+        return urlData.toString();
     }
 }

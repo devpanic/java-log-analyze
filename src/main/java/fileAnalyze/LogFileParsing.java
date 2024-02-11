@@ -50,6 +50,7 @@ public class LogFileParsing {
         while ((temp = bufReader.readLine()) != null) {
             parsedLine = refineString(temp);
             logAnalyze.saveRespCodeData(parsedLine[0]);
+            logAnalyze.saveURLData(parsedLine[1].replace("/", ""), Integer.parseInt(parsedLine[0]));
             logAnalyze.saveKeyData(parsedLine[2]);
             logAnalyze.saveBrowserData(parsedLine[3]);
             logAnalyze.saveTimeData(Integer.parseInt(parsedLine[5]));
@@ -82,25 +83,22 @@ public class LogFileParsing {
 
         logAnalyze.showKeys();
         System.out.println("res " + logAnalyze.getKeyRatio("res"));
-        System.out.println("opera " + logAnalyze.getKeyRatio("opera"));
         System.out.println("jsp " + logAnalyze.getKeyRatio("jsp"));
-        System.out.println("firefox " + logAnalyze.getKeyRatio("firefox"));
-        System.out.println("Safari " + logAnalyze.getKeyRatio("Safari"));
         System.out.println("HTML " + logAnalyze.getKeyRatio("HTML"));
         System.out.println("javascript " + logAnalyze.getKeyRatio("javascript"));
         System.out.println("java " + logAnalyze.getKeyRatio("java"));
         System.out.println("d8 " + logAnalyze.getKeyRatio("d8"));
-        System.out.println("Chrome " + logAnalyze.getKeyRatio("Chrome"));
         System.out.println("hadoop " + logAnalyze.getKeyRatio("hadoop"));
         System.out.println("front " + logAnalyze.getKeyRatio("front"));
-        System.out.println("ie " + logAnalyze.getKeyRatio("ie"));
         System.out.println("mongodb " + logAnalyze.getKeyRatio("mongodb"));
         System.out.println("AWS " + logAnalyze.getKeyRatio("AWS"));
         System.out.println("ora " + logAnalyze.getKeyRatio("ora"));
         System.out.println(
                 "Max : " + logAnalyze.getMaxCountKey() + ", " + logAnalyze.getKeyCount(logAnalyze.getMaxCountKey()));
 
-        System.out.println(logAnalyze.showBrowserData());
-        logAnalyze.showTimeData();
+        System.out.println(logAnalyze.getBrowserData());
+        System.out.println(logAnalyze.showTimeData());
+        System.out.println(logAnalyze.showURLData());
+        System.out.println(logAnalyze.getURLRespData("books", 500));
     }
 }
