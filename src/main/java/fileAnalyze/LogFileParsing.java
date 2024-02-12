@@ -26,6 +26,10 @@ public class LogFileParsing {
         testParsing();
     }
 
+    public LogDataAnalyze getCustomAnalyze() {
+        return customAnalyze;
+    }
+
     public void defaultParsing() throws IOException {
         for (File log : logs) {
             openStream(log);
