@@ -14,19 +14,34 @@ public class LogFileParsing {
     private FileReader fReader;
     private BufferedReader bufReader;
     private LogDataAnalyze logAnalyze;
+    private LogDataAnalyze customAnalyze;
 
     public LogFileParsing() throws IOException {
         logAnalyze = new LogDataAnalyze();
         logPath = new File(LOG_PATH);
         logs = logPath.listFiles();
 
+        defaultParsing();
+        customizedParsing(1, 3);
+        testParsing();
+    }
+
+    public void defaultParsing() throws IOException {
         for (File log : logs) {
             openStream(log);
             readStream();
             closeStream();
         }
+    }
 
-        testParsing();
+    public void customizedParsing(int start, int end) throws IOException {
+        customAnalyze = new LogDataAnalyze();
+
+        for (File log : logs) {
+            openStream(log);
+            readStream(start, end);
+            closeStream();
+        }
     }
 
     public void openStream(File log) throws FileNotFoundException {
@@ -54,6 +69,26 @@ public class LogFileParsing {
             logAnalyze.saveKeyData(parsedLine[2]);
             logAnalyze.saveBrowserData(parsedLine[3]);
             logAnalyze.saveTimeData(Integer.parseInt(parsedLine[5]));
+        }
+    }
+
+    public void readStream(int start, int end) throws IOException {
+        String temp = null;
+        String[] parsedLine = null;
+
+        while (start > 1 && bufReader.readLine() != null) {
+            start -= 1;
+        }
+
+        while (end != 0 && (temp = bufReader.readLine()) != null) {
+            parsedLine = refineString(temp);
+            customAnalyze.saveRespCodeData(parsedLine[0]);
+            customAnalyze.saveURLData(parsedLine[1].replace("/", ""), Integer.parseInt(parsedLine[0]));
+            customAnalyze.saveKeyData(parsedLine[2]);
+            customAnalyze.saveBrowserData(parsedLine[3]);
+            customAnalyze.saveTimeData(Integer.parseInt(parsedLine[5]));
+            end -= 1;
+            System.out.println(temp);
         }
     }
 
